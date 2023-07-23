@@ -1,0 +1,145 @@
+.main-section {
+  width: 460px;
+  height: 623px;
+  position: absolute;
+  top: calc(50% - 623px / 2);
+  left: calc(50% - 460px / 2);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.top-section {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 140px 140px 68px 52px;
+  grid-gap: 20px;
+  align-items: center;
+}
+
+.logo {
+  width: 71.2px;
+  height: 31.7px;
+}
+
+.whos-turn {
+  width: 140px;
+  height: 52px;
+  background-color: #1f3641;
+  border-radius: 10px;
+  box-shadow: 0px -4px 0px 0px #10212a inset;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: normal;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-align: center;
+  color: #a8bfc9;
+  position: relative;
+  padding-top: 13px;
+}
+
+.top-section button {
+  grid-column-start: 4;
+  grid-column-end: 5;
+  height: 52px;
+  border-radius: 10px;
+  background-color: #a8bfc9;
+}
+
+.game-board {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 140px 140px 140px;
+  grid-template-rows: 140px 140px 140px;
+  grid-gap: 20px;
+}
+
+.cell {
+  background-color: #1f3641;
+  border-radius: 15px;
+  box-shadow: 0px -8px 0px 0px #10212a inset;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+.stats {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 140px 140px 140px;
+  grid-gap: 20px;
+}
+
+.user,
+.ties,
+.opponent {
+  height: 72px;
+  border-radius: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  letter-spacing: 0.075px;
+}
+
+.user {
+  background-color: #31c3bd;
+}
+
+.ties {
+  background-color: #a8bfc9;
+}
+
+.opponent {
+  background-color: #f2b137;
+}
+
+.score {
+  font-size: 24px;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.final-message {
+  height: 266px;
+  width: 100vw;
+  display: flex;
+  position: absolute;
+  top: calc(50% - 266px / 2);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-transform: uppercase;
+  background-color: #1f3641;
+  color: #a8bfc9;
+  z-index: 2;
+}
+
+.win-or-lose {
+  font-size: 16px;
+  font-weight: 700;
+  line-height: normal;
+  letter-spacing: 1px;
+  z-index: 2;
+  padding-bottom: 23px;
+}
+
+.final-outcome {
+  font-size: 40px;
+  font-weight: 700;
+  line-height: normal;
+  letter-spacing: 2.5px;
+  z-index: 2;
+}
+
+@media (max-width: 600px) {
+  .main-section {
+    width: 328px;
+    height: 518px;
+    left: calc(50% - 328px / 2);
+    top: calc(50% - 518px / 2);
+  }
+}
