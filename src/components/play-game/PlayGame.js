@@ -82,7 +82,7 @@ function GameBoard({
     if (opponent === "CPU") {
       setTimeout(() => {
         const bestMove = cpuPlayerLogic(cells);
-        dispatch({ type: "onMove", payload: { num: bestMove, isX: isX } });
+        dispatch({ type: "onMove", payload: { idx: bestMove, isX: isX } });
       }, 1000);
     }
   }
@@ -269,7 +269,7 @@ function GameBoard({
             num={num}
             value={cells[num]}
             userMark={userMark}
-            onCellClick={() =>
+            onClick={() =>
               dispatch({ type: "onMove", payload: { idx: num, isX: isX } })
             }
             key={num}
