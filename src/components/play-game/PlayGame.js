@@ -70,7 +70,7 @@ function GameBoard({
     if ((isX && opponent === "X") || (!isX && opponent === "O")) {
       opponentsMove(cells);
     }
-  }, [cells, isX, opponent]);
+  });
 
   // function handlePlaceMark(i, mark) {
   //   if (cells[i] || winner) return;
