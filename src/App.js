@@ -48,7 +48,7 @@ function reducer(state, action) {
       return {
         ...state,
         cells: state.cells.map((cell, index) =>
-          index === action.payload.idx ? current : cell
+          index === Number(action.payload.idx) ? current : cell
         ),
         isX: !state.isX,
       };
