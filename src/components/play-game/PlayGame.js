@@ -81,24 +81,23 @@ function GameBoard({
     checkIfWin(cells, userMark, dispatch);
     checkIfWin(cells, opponent, dispatch);
     if (!winner && Object.values(cells).indexOf(null) === -1) {
-      dispatch({ type: "onFinishGame", payload: "tie" });
+      dispatch({
+        type: "onFinishGame",
+        payload: { winner: "tie", increase: 1 },
+      });
     }
   }, [cells, userMark, opponent, dispatch, winner]);
 
   useEffect(() => {
     if ((isX && opponent === "X") || (!isX && opponent === "O")) {
-      opponentsMove(cells, opponentPlayer);
+      if (opponentPlayer === "CPU") {
+        setTimeout(() => {
+          const bestMove = cpuPlayerLogic(cells);
+          dispatch({ type: "onMove", payload: { idx: bestMove, isX: isX } });
+        }, 1000);
+      }
     }
-  }, [cells, isX, opponent]);
-
-  function opponentsMove(cells, opponentPlayer) {
-    if (opponentPlayer === "CPU") {
-      setTimeout(() => {
-        const bestMove = cpuPlayerLogic(cells);
-        dispatch({ type: "onMove", payload: { idx: bestMove, isX: isX } });
-      }, 1000);
-    }
-  }
+  });
 
   function cpuPlayerLogic(cells) {
     if (cells[1] === userMark && cells[2] === userMark && cells[3] === null) {
@@ -268,7 +267,10 @@ function GameBoard({
       combination.forEach((position) => {
         if (cells[position] === mark) counter++;
         if (counter === 3) {
-          dispatch({ type: "onFinishGame", payload: mark });
+          dispatch({
+            type: "onFinishGame",
+            payload: { winner: mark, increase: 1 },
+          });
         }
       });
     });
