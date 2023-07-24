@@ -43,7 +43,7 @@ export default function NewGame({ userMark, dispatch }) {
             </button>
             <button
               className="btn choose-multi"
-              onClick={() => dispatch({ type: "startGame", payload: "Multi" })}
+              onClick={() => dispatch({ type: "startGame", payload: "multi" })}
             >
               New game (vs player)
             </button>

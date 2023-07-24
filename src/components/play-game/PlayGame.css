@@ -135,6 +135,37 @@
   z-index: 2;
 }
 
+.btn-quit {
+  width: 76px;
+  height: 52px;
+  border-radius: 10px;
+  background: #a8bfc9;
+  box-shadow: 0px -4px 0px 0px #6b8997 inset;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: normal;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #1a2a33;
+  margin-right: 16px;
+  margin-top: 31px;
+}
+
+.btn-next-round {
+  width: 146px;
+  height: 52px;
+  border-radius: 10px;
+  background: #f2b137;
+  box-shadow: 0px -4px 0px 0px #cc8b13 inset;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: normal;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #1a2a33;
+  margin-top: 31px;
+}
+
 @media (max-width: 600px) {
   .main-section {
     width: 328px;

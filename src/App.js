@@ -7,7 +7,7 @@ const initialState = {
   points: {
     X: 0,
     O: 0,
-    T: 0,
+    tie: 0,
   },
   userMark: "X",
   isX: true,
@@ -24,6 +24,8 @@ const initialState = {
     8: null,
     9: null,
   },
+  opponentPlayer: "CPU",
+  countCompletedGames: 0,
 };
 
 function reducer(state, action) {
@@ -32,43 +34,63 @@ function reducer(state, action) {
       return {
         ...state,
         userMark: action.payload,
-        opponent: action.payload === "X" ? "O" : "X",
       };
     case "startGame":
-      return { ...state, opponent: action.payload, status: "active" };
+      return { ...state, opponentPlayer: action.payload, status: "active" };
     case "onMove":
-      const player = action.payload.isX;
+      const { idx, isX } = action.payload;
       let current;
-      if (player) {
+      if (isX) {
         current = "X";
       } else {
         current = "O";
       }
-      if (state.cells[action.payload.idx] || state.winner) return;
+      if (state.cells[idx] || state.winner) return { ...state };
+      const newCells = { ...state.cells, [idx]: current };
+      return { ...state, cells: newCells, isX: !isX };
+    case "onFinishGame":
+      const winnerofGame = action.payload;
+      const currentWinnerPoints = Number(state.points[winnerofGame]);
+      const newWinnerPoints = currentWinnerPoints + 1;
+      const newPoints = {
+        ...state.points,
+        [winnerofGame]: newWinnerPoints,
+      };
       return {
         ...state,
-        cells: state.cells.map((cell, index) =>
-          index === Number(action.payload.idx) ? current : cell
-        ),
-        isX: !state.isX,
+        winner: winnerofGame,
+        status: "finished",
+        points: newPoints,
+        countCompletedGames: state.countCompletedGames + 1,
       };
-    case "onFinishGame":
-      return { ...state, winner: action.payload, status: "finished" };
+    case "restart":
+      console.log(state.countCompletedGames);
+      return {
+        ...state,
+        cells: initialState.cells,
+        status: "active",
+        winner: null,
+        isX: state.countCompletedGames % 2 === 0 ? true : false,
+      };
+    case "quit":
+      return { ...initialState };
     default:
       throw new Error("Invalid action");
   }
 }
 
 export default function App() {
-  const [{ status, points, userMark, isX, winner, opponent, cells }, dispatch] =
-    useReducer(reducer, initialState);
+  const [
+    { status, points, userMark, isX, winner, opponent, cells, opponentPlayer },
+    dispatch,
+  ] = useReducer(reducer, initialState);
 
   return (
     <>
       {status === "start" && (
         <NewGame userMark={userMark} dispatch={dispatch} />
       )}
-      {status === "active" && (
+      {(status === "active" || status === "finished") && (
         <PlayGame
           userMark={userMark}
           points={points}
@@ -77,6 +99,7 @@ export default function App() {
           status={status}
           cells={cells}
           opponent={opponent}
+          opponentPlayer={opponentPlayer}
           dispatch={dispatch}
         />
       )}

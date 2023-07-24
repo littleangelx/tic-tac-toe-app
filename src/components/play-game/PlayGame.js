@@ -8,7 +8,12 @@ export default function PlayGame({
   winner,
   status,
   dispatch,
+  cells,
+  opponent,
+  opponentPlayer,
 }) {
+  opponent = userMark === "X" ? "O" : "X";
+
   return (
     <div className="container">
       <div className="row">
@@ -16,12 +21,25 @@ export default function PlayGame({
           <div className="top-section">
             <Logo />
             <WhosTurn who={isX ? "X" : "O"} />
-            <RestartButton />
+            <RestartButton dispatch={dispatch} />
           </div>
-          <GameBoard userMark={userMark} isX={isX} dispatch={dispatch} />
+          <GameBoard
+            userMark={userMark}
+            isX={isX}
+            dispatch={dispatch}
+            cells={cells}
+            winner={winner}
+            opponent={opponent}
+            status={status}
+            opponentPlayer={opponentPlayer}
+          />
 
           <div className="stats">
-            <Stats userMark={userMark} points={points} />
+            <Stats
+              userMark={userMark}
+              points={points}
+              opponentPlayer={opponentPlayer}
+            />
           </div>
         </div>
       </div>
@@ -41,9 +59,9 @@ function WhosTurn({ who }) {
   );
 }
 
-function RestartButton() {
+function RestartButton({ dispatch }) {
   return (
-    <button>
+    <button onClick={() => dispatch({ type: "restart" })}>
       <img src="icon-restart.svg" alt="restart icon" />
     </button>
   );
@@ -57,29 +75,24 @@ function GameBoard({
   cells,
   opponent,
   status,
+  opponentPlayer,
 }) {
   useEffect(() => {
-    checkIfWin(cells, userMark);
-    checkIfWin(cells, opponent);
+    checkIfWin(cells, userMark, dispatch);
+    checkIfWin(cells, opponent, dispatch);
     if (!winner && Object.values(cells).indexOf(null) === -1) {
       dispatch({ type: "onFinishGame", payload: "tie" });
     }
-  }, [cells, userMark, opponent, winner, dispatch]);
+  }, [cells, userMark, opponent, dispatch, winner]);
 
   useEffect(() => {
     if ((isX && opponent === "X") || (!isX && opponent === "O")) {
-      opponentsMove(cells);
+      opponentsMove(cells, opponentPlayer);
     }
-  });
+  }, [cells, isX, opponent]);
 
-  // function handlePlaceMark(i, mark) {
-  //   if (cells[i] || winner) return;
-  //   const newCells = { ...cells, [i]: mark };
-  //   dispatch({ type: "onMove", payload: newCells });
-  // }
-
-  function opponentsMove(cells) {
-    if (opponent === "CPU") {
+  function opponentsMove(cells, opponentPlayer) {
+    if (opponentPlayer === "CPU") {
       setTimeout(() => {
         const bestMove = cpuPlayerLogic(cells);
         dispatch({ type: "onMove", payload: { idx: bestMove, isX: isX } });
@@ -269,10 +282,9 @@ function GameBoard({
             num={num}
             value={cells[num]}
             userMark={userMark}
-            onClick={() =>
-              dispatch({ type: "onMove", payload: { idx: num, isX: isX } })
-            }
             key={num}
+            dispatch={dispatch}
+            isX={isX}
           />
         ))}
       </div>
@@ -283,9 +295,14 @@ function GameBoard({
   );
 }
 
-function Cell({ num, value, userMark, onCellClick }) {
+function Cell({ num, value, userMark, dispatch, isX }) {
   return (
-    <div className={"cell cell-" + Number(num)} onClick={onCellClick}>
+    <div
+      className={"cell cell-" + Number(num)}
+      onClick={() =>
+        dispatch({ type: "onMove", payload: { idx: num, isX: isX } })
+      }
+    >
       {value === "X" && <img src="icon-x.svg" alt="icon x" />}
       {value === "O" && <img src="icon-o.svg" alt="icon o" />}
     </div>
@@ -311,7 +328,7 @@ function FinalMessage({ winner, userMark, dispatch }) {
             <path
               d="M15.002 1.147 32 18.145 48.998 1.147a3 3 0 0 1 4.243 0l9.612 9.612a3 3 0 0 1 0 4.243L45.855 32l16.998 16.998a3 3 0 0 1 0 4.243l-9.612 9.612a3 3 0 0 1-4.243 0L32 45.855 15.002 62.853a3 3 0 0 1-4.243 0L1.147 53.24a3 3 0 0 1 0-4.243L18.145 32 1.147 15.002a3 3 0 0 1 0-4.243l9.612-9.612a3 3 0 0 1 4.243 0Z"
               fill="#31C3BD"
-              fill-rule="evenodd"
+              fillRule="evenodd"
             />
           </svg>
         )}
@@ -325,28 +342,64 @@ function FinalMessage({ winner, userMark, dispatch }) {
         )}
         {winner === "tie" ? "Round tied" : ` takes the round`}
       </div>
+      <div className="quit-or-again">
+        <button
+          className="btn btn-quit"
+          onClick={() => dispatch({ type: "quit" })}
+        >
+          Quit
+        </button>
+        <button
+          className="btn btn-next-round"
+          onClick={() => dispatch({ type: "restart" })}
+        >
+          Next round
+        </button>
+      </div>
     </div>
   );
 }
 
-function Stats({ userMark, points }) {
+function Stats({ userMark, points, opponentPlayer }) {
   return (
     <>
       <div className="user">
         <div>
           <span className="x-mark">X</span>
-          <span> ({userMark === "X" ? "You" : "CPU"})</span>
+          <span>
+            {" "}
+            (
+            {userMark === "X"
+              ? opponentPlayer === "CPU"
+                ? "You"
+                : "p1"
+              : opponentPlayer === "CPU"
+              ? "CPU"
+              : "p2"}
+            )
+          </span>
         </div>
         <div className="score x-score">{points.X}</div>
       </div>
       <div className="ties">
         <span>Ties</span>
-        <div className="score ties-score">{points.T}</div>
+        <div className="score ties-score">{points.tie}</div>
       </div>
       <div className="opponent">
         <div>
           <span className="o-mark">O</span>
-          <span> ({userMark === "O" ? "You" : "CPU"})</span>
+          <span>
+            {" "}
+            (
+            {userMark === "O"
+              ? opponentPlayer === "CPU"
+                ? "You"
+                : "p1"
+              : opponentPlayer === "CPU"
+              ? "CPU"
+              : "p2"}
+            )
+          </span>
         </div>
         <div className="score o-score">{points.O}</div>
       </div>
