@@ -25,7 +25,6 @@ const initialState = {
     9: null,
   },
   opponentPlayer: "CPU",
-  countCompletedGames: 0,
 };
 
 function reducer(state, action) {
@@ -49,19 +48,14 @@ function reducer(state, action) {
       const newCells = { ...state.cells, [idx]: current };
       return { ...state, cells: newCells, isX: !isX };
     case "onFinishGame":
-      const winnerofGame = action.payload;
-      const currentWinnerPoints = Number(state.points[winnerofGame]);
-      const newWinnerPoints = currentWinnerPoints + 1;
-      const newPoints = {
-        ...state.points,
-        [winnerofGame]: newWinnerPoints,
-      };
+      const { winner, increase } = action.payload;
+      // const currentWinnerPoints = Number(state.points[winnerofGame]);
+      // const newWinnerPoints = currentWinnerPoints + 1;
       return {
         ...state,
-        winner: winnerofGame,
+        winner: winner,
         status: "finished",
-        points: newPoints,
-        countCompletedGames: state.countCompletedGames + 1,
+        points: { ...state.points, [winner]: state.points[winner] + increase },
       };
     case "restart":
       console.log(state.countCompletedGames);
@@ -84,6 +78,12 @@ export default function App() {
     { status, points, userMark, isX, winner, opponent, cells, opponentPlayer },
     dispatch,
   ] = useReducer(reducer, initialState);
+
+  const countCompletedGames = Object.values(points).reduce((cur, acc) => {
+    return cur + acc;
+  }, 0);
+
+  console.log(countCompletedGames);
 
   return (
     <>
